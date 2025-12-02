@@ -1,0 +1,13 @@
+service: frontend
+runtime: nodejs20
+env: standard
+instance_class: F2
+
+handlers:
+  - url: /.*
+    script: auto
+
+env_variables:
+  NODE_ENV: "production"
+  NEXT_PUBLIC_API_BASE_URL: "https://backend-dot-project-ab-dev.el.r.appspot.com"
+  PORT: 8080

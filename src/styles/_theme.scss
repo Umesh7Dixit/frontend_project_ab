@@ -1,0 +1,101 @@
+/* styles/_theme.scss
+   Shared theme tokens for the project
+   (Replace values if you want different tones) */
+
+$radius: 0.625rem;
+
+$radius-sm: calc(#{$radius} - 4px);
+$radius-md: calc(#{$radius} - 2px);
+$radius-lg: $radius;
+$radius-xl: calc(#{$radius} + 4px);
+
+/* Core colors */
+$color-background: #ffffff;
+$color-foreground: #111827;
+
+/* Card / surface tokens */
+$color-card: #ffffff;
+$color-card-foreground: #111827;
+$color-popover: #ffffff;
+$color-popover-foreground: #111827;
+
+/* **Missing previously**: surface used for glass/panels and subtle controls */
+$color-surface: rgba(255, 255, 255, 0.15);
+/* semi-transparent glass surface */
+$color-surface-2: rgba(255, 255, 255, 0.05);
+/* lighter surface for depth */
+
+/* Brand & accents */
+$color-primary: #2b5f5d;
+/* deep teal */
+$color-primary-foreground: #ffffff;
+
+$color-secondary: #51b575;
+/* green */
+$color-secondary-foreground: #ffffff;
+
+$color-muted: #f3f4f6;
+$color-muted-foreground: #4b5563;
+
+$color-accent: #b6e0d0;
+/* mint */
+$color-accent-foreground: #0b1f1d;
+
+$color-destructive: #dc2626;
+$color-border: #e5e7eb;
+$color-input: #e5e7eb;
+$color-ring: #2b5f5d;
+
+/* Fonts */
+$font-sans:
+  "Poppins",
+  system-ui,
+  -apple-system,
+  "Segoe UI",
+  Roboto,
+  "Helvetica Neue",
+  Arial;
+$font-heading: "Montserrat", $font-sans;
+$font-mono:
+  "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono",
+  monospace;
+
+/* Utilities & mixins */
+@mixin border-radius($size) {
+  border-radius: $size;
+}
+
+@mixin card {
+  background: $color-card;
+  color: $color-card-foreground;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+}
+
+@mixin button($bg, $color: #fff) {
+  background-color: $bg;
+  color: $color;
+  border: none;
+  border-radius: $radius-md;
+  padding: 0.5rem 1rem;
+  font-family: $font-sans;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    filter: brightness(0.95);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+/* small helpers */
+%flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
