@@ -24,8 +24,7 @@ export interface ProjectOverviewProps {
 }
 
 
-export interface KPIGridProps {
-}
+export type KPIGridProps = object
 
 export interface ProjectDetailsModalProps {
   open: boolean;
@@ -433,7 +432,7 @@ export const upsertBatch = (userId: number, batch: any[]) => {
   return axios.post("/upsert_activity_data_batch", {
     p_project_id: getProjectId(),
     p_user_id: userId,
-    p_data_batch: JSON.stringify(batch),
+    p_data_batch: batch,
   });
 };
 
