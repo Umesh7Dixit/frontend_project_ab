@@ -29,7 +29,8 @@ interface GeneratePdfPayload {
 
 export async function downloadReport(project_id: number): Promise<void> {
   try {
-    const { data } = await axios.post<Res>("/get_project_category_totals", {
+    const { data } = await axios.post<Res>("/get_project_category_scope_totals", {
+    // const { data } = await axios.post<Res>("/get_project_category_totals", {
       project_id,
     });
     const templates = data?.data?.templates ?? [];
