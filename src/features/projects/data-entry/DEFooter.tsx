@@ -77,7 +77,7 @@ export default function DEFooter({
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="w-full py-4 px-5 rounded-2xl bg-white/60 backdrop-blur-[10px] shadow-md"
+      className="w-full p-2 rounded-full bg-white/60 backdrop-blur-[10px] shadow-md"
     >
       <div className="flex flex-wrap justify-between items-center gap-4">
         <motion.div

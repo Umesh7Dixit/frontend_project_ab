@@ -15,7 +15,7 @@ export interface RowData {
   main_category_label?: string;
   selection_2: string;
   ef: string;
-  efSource: string;
+  source: string;
   scope?: string;
 }
 
@@ -95,7 +95,7 @@ export const previewTableColumns = [
   { key: "category", label: "Category" },
   { key: "subCategory", label: "Sub Category" },
   { key: "ef", label: "EF" },
-  { key: "efSource", label: "EF Source" },
+  { key: "source", label: "EF Source" },
   { key: "actions", label: "Actions" },
 ];
 

@@ -68,8 +68,8 @@ const GHGEmissionsPie = ({ chartData, total }: Props) => {
           </PieChart>
         </ResponsiveContainer>
 
-        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-6">
-          <p className="text-3xl font-bold tracking-tighter text-gray-800">{formattedTotal}</p>
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <p className="text-2xl font-bold tracking-tighter">{formattedTotal}</p>
           <p className="text-xs text-gray-500 font-medium uppercase tracking-widest">tCO₂e</p>
         </div>
 

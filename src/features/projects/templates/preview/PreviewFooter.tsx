@@ -65,6 +65,7 @@ const PreviewFooter: React.FC<PreviewFooterProps> = ({
     const response = await templateApi.commitStagedChangesToProject(projectId);
     if (response.data?.issuccessful) {
       toast.success("Configuration saved!");
+      router.push(`/project/${templateID}/data-control`)
     } else {
       toast.error(response.data?.message || "Error saving.");
     }
@@ -74,7 +75,7 @@ const PreviewFooter: React.FC<PreviewFooterProps> = ({
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="w-full bg-white/70 backdrop-blur-md border-t border-gray-200 shadow-md px-6 py-4 rounded-2xl"
+      className="w-full bg-white/70 backdrop-blur-md border-t border-gray-200 shadow-md p-2 rounded-full"
     >
       {mode === "preview" ? (
         <div className="w-full flex justify-between">
@@ -175,10 +176,7 @@ const PreviewFooter: React.FC<PreviewFooterProps> = ({
 
           {disableNext && (
             <MotionButton
-              onClick={() => {
-                handleSave();
-                router.push(`/project/${templateID}/data-control`)
-              }}
+              onClick={() => handleSave()}
               className="rounded-full px-5 bg-secondary hover:bg-secondary/90 text-white flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Send size={16} />

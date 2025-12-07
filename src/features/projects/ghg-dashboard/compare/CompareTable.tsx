@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   Table,
@@ -12,22 +12,7 @@ import {
 } from "@/components/ui/table";
 import { motion } from "motion/react";
 
-const bestCompanies = [
-  { unit: "Unit 1", rating: "Negligible", weight: 20 },
-  { unit: "Unit 2", rating: "Negligible", weight: 35 },
-  { unit: "Unit 3", rating: "Negligible", weight: 27 },
-  { unit: "Unit 4", rating: "Negligible", weight: 22 },
-  { unit: "Unit 5", rating: "Negligible", weight: 25 },
-];
-
-const worstCompanies = [
-  { unit: "Unit 1", rating: "High", weight: 20 },
-  { unit: "Unit 2", rating: "High", weight: 35 },
-  { unit: "Unit 3", rating: "High", weight: 27 },
-  { unit: "Unit 4", rating: "High", weight: 22 },
-  { unit: "Unit 5", rating: "High", weight: 25 },
-];
-
+/* 
 const RiskIndicator = ({ rating }: { rating: string }) => {
   const colors: Record<string, string> = {
     Negligible: "bg-emerald-400",
@@ -54,20 +39,20 @@ const RiskIndicator = ({ rating }: { rating: string }) => {
         {[...Array(5)].map((_, i) => (
           <span
             key={i}
-            className={`h-2 w-2 rounded-sm ${
-              i < filled ? colors[rating] : "bg-gray-300"
-            }`}
+            className={`h-2 w-2 rounded-sm ${i < filled ? colors[rating] : "bg-gray-300"
+              }`}
           />
         ))}
       </div>
       <span className="text-[10px] text-gray-600">{rating}</span>
     </div>
   );
-};
+}; 
+*/
 
 type CompanyTableProps = {
   title: string;
-  data: { unit: string; rating: string; weight: number }[];
+  data: { facility: string; carbon: number }[];
   delay?: number;
 };
 
@@ -78,31 +63,29 @@ const CompanyTable = ({ title, data, delay = 0 }: CompanyTableProps) => (
     transition={{ duration: 0.4, delay }}
     className="relative"
   >
-    <Card className="bg-white/60 backdrop-blur-md shadow-lg rounded-xl gap-2">
-      <CardHeader className="px-3">
+    <Card className="relative h-full shadow-lg rounded-xl overflow-hidden">
+      <div className="absolute inset-0 bg-white/60 backdrop-blur-md pointer-events-none" />
+
+      <CardHeader className="px-3 relative z-10">
         <CardTitle className="text-xs font-semibold">{title}</CardTitle>
       </CardHeader>
-      <CardContent className="px-3">
+      <CardContent className="px-3 relative z-10">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-gray-600 text-xs">Unit</TableHead>
-              <TableHead className="text-gray-600 text-xs">
-                ESG Risk Rating
-              </TableHead>
-              <TableHead className="text-gray-600 text-xs">
-                PDMI Weight
-              </TableHead>
+              <TableHead className="text-gray-600 text-xs">Facility Name</TableHead>
+              {/* <TableHead className="text-gray-600 text-xs">ESG Risk Rating</TableHead> */}
+              <TableHead className="text-gray-600 text-xs">Total Carbon</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((c) => (
-              <TableRow key={c.unit}>
-                <TableCell className="text-xs">{c.unit}</TableCell>
-                <TableCell className="text-xs">
+            {data.slice(0, 5).map((c, i) => (
+              <TableRow key={i}>
+                <TableCell className="text-xs font-medium text-gray-700">{c.facility}</TableCell>
+                {/* <TableCell className="text-xs">
                   <RiskIndicator rating={c.rating} />
-                </TableCell>
-                <TableCell className="text-xs">{c.weight}</TableCell>
+                </TableCell> */}
+                <TableCell className="text-xs">{c.carbon.toFixed(2)}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -112,14 +95,45 @@ const CompanyTable = ({ title, data, delay = 0 }: CompanyTableProps) => (
   </motion.div>
 );
 
-const CompareTable = () => {
+const CompareTable = ({ data }: { data: any[] }) => {
+  const processed = useMemo(() => {
+    if (!data || data.length === 0) return { best: [], worst: [] };
+
+    const map = new Map<string, number>();
+    data.forEach((r) => {
+      const f = r.facility_name;
+      if (!f) return;
+      const c = parseFloat(r.total_carbon || "0");
+      map.set(f, (map.get(f) || 0) + c);
+    });
+
+    const arr = Array.from(map.entries()).map(([facility, carbon]) => ({
+      facility,
+      carbon,
+    }));
+
+    const sortedDesc = [...arr].sort((a, b) => b.carbon - a.carbon);
+    const worst = sortedDesc.filter((x) => x.carbon > 0).slice(0, 5);
+
+    const worstNames = new Set(worst.map((x) => x.facility));
+
+    const best = arr
+      .filter((x) => !worstNames.has(x.facility))
+      .sort((a, b) => a.carbon - b.carbon)
+      .slice(0, 5);
+
+    return { best, worst };
+  }, [data]);
+
+
+
   const tables = [
-    { title: "Best 5 Companies", data: bestCompanies },
-    { title: "Worst 5 Companies", data: worstCompanies },
+    { title: "Best 5 Facilities", data: processed.best },
+    { title: "Worst 5 Facilities", data: processed.worst },
   ];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 z-10 lg:grid-cols-2 gap-4">
       {tables.map((t, i) => (
         <CompanyTable key={t.title} {...t} delay={i * 0.15} />
       ))}

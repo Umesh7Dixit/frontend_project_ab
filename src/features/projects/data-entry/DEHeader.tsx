@@ -18,6 +18,7 @@ type HeaderProps = {
   onUpload?: () => void;
   readOnly?: boolean;
   saved: boolean;
+  previewMode: boolean;
   setPreviewMode: (mode: boolean) => void;
 };
 
@@ -29,6 +30,7 @@ export default function DEHeader({
   readOnly = false,
   setPreviewMode,
   saved,
+  previewMode,
   emissionData
 }: HeaderProps) {
   const scopeNum = scope.split("-")[1] ?? "1";
@@ -89,10 +91,9 @@ export default function DEHeader({
       <div>
         <h1 className="text-xl font-bold text-gray- flex items-center gap-3">
           {title}
-          <span className="text-xs font-semibold rounded-[10px] px-2 py-1 bg-[rgba(238,255,0,0.45)] text-[#2b5f5d]">
-            {/* TODO: Fix, total of all the categories quantity */}
+          {/* <span className="text-xs font-semibold rounded-[10px] px-2 py-1 bg-[rgba(238,255,0,0.45)] text-[#2b5f5d]">
             Total: 1358
-          </span>
+          </span> */}
         </h1>
         <p className="text-sm text-gray-500">
           Enter data for project <strong>{projectId}</strong>. Values entered
@@ -125,7 +126,7 @@ export default function DEHeader({
             Bulk Upload
           </motion.button>
         )}
-        {(!isViewer) && (
+        {(!isViewer && previewMode) && (
           <MotionButton
             variant="secondary"
             initial={{ opacity: 0 }}

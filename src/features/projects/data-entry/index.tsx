@@ -236,6 +236,7 @@ export default function DataEntryPage({ initialData }: Props) {
 
       <HeaderSection
         saved={saved}
+        previewMode={previewMode}
         projectId={data.projectId}
         scope={data.scope}
         emissionData={emissionData}

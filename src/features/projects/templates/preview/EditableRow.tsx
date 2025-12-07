@@ -78,11 +78,10 @@ const EditableRow: React.FC<EditableRowProps> = ({
   const [selection2Options, setSelection2Options] = useState<DropdownOption[]>([]);
 
   const scope = draft.scope || "Scope 1";
-
   const resetBelow = (level: keyof RowData) => {
     let clone: RowData = { ...draft };
     switch (level) {
-      case "efSource":
+      case "source":
         clone.main_category = "";
         clone.main_category_id = null;
         clone.sub_category = "";
@@ -130,9 +129,9 @@ const EditableRow: React.FC<EditableRowProps> = ({
     setDraft(clone);
   };
 
-  const loadMainCategories = async (efSource: string) => {
-    if (!efSource) return [];
-    const res = await templateApi.getMainCategoriesForScopeAndSource(token as string, scope, efSource);
+  const loadMainCategories = async (source: string) => {
+    if (!source) return [];
+    const res = await templateApi.getMainCategoriesForScopeAndSource(token as string, scope, source);
     if (res.issuccessful && res.data && res.data.categories) {
       const opts = res.data.categories.map((c: MainCategory) => ({
         label: c.category_name,
@@ -205,7 +204,7 @@ const EditableRow: React.FC<EditableRowProps> = ({
       setSelection2Options(opts);
       if (opts.some((o: DropdownOption) => o.value === "N/A" && (!draft.selection_2 || draft.selection_2 === "N/A"))) {
         setDraft(prev => ({ ...prev, selection_2: "N/A" }));
-        await loadEF(draft.efSource, scope, mainId, sub, act, sel1, "N/A");
+        await loadEF(draft.source, scope, mainId, sub, act, sel1, "N/A");
       }
       return opts;
     }
@@ -213,12 +212,12 @@ const EditableRow: React.FC<EditableRowProps> = ({
     return [];
   };
 
-  const loadEF = async (efSource: string, scope: string, mainId: any, sub: string, act: string, sel1: string, sel2: string) => {
-    if (!efSource || !scope || !mainId || !sub || !act || !sel1) {
+  const loadEF = async (source: string, scope: string, mainId: any, sub: string, act: string, sel1: string, sel2: string) => {
+    if (!source || !scope || !mainId || !sub || !act || !sel1) {
       setDraft(prev => ({ ...prev, ef: "" }));
       return;
     }
-    const res = await templateApi.getEmissionFactor(token as string, efSource, scope, mainId, sub, act, sel1, sel2);
+    const res = await templateApi.getEmissionFactor(token as string, source, scope, mainId, sub, act, sel1, sel2);
     if (res.issuccessful) {
       const efVal = res.data.templates?.[0]?.emission_factor ?? "-";
       setNewSubCategoryId(res.data.templates?.[0]?.subcategory_id ?? 0);
@@ -249,7 +248,7 @@ const EditableRow: React.FC<EditableRowProps> = ({
     await fetchUnits();
     setIsLoading(true);
     try {
-      const loadedMainCats = await loadMainCategories(draft.efSource || "GHG Protocol");
+      const loadedMainCats = await loadMainCategories(draft.source || "GHG Protocol");
       let currentMainId = draft.main_category_id;
       if (!currentMainId && draft.main_category) {
         const found = loadedMainCats.find((c: any) => c.label === draft.main_category);
@@ -283,7 +282,7 @@ const EditableRow: React.FC<EditableRowProps> = ({
       "sub_category": draft.sub_category,
       "subcategory_id": newSubCategoryId,
       "main_category": draft.main_category_label || draft.main_category,
-      "efSource": draft.efSource,
+      "source": draft.source,
       "ef": draft.ef,
       "frequency": draft.frequency,
     }
@@ -400,7 +399,7 @@ const EditableRow: React.FC<EditableRowProps> = ({
               onChange={async val => {
                 resetBelow("selection_2");
                 setDraft(prev => ({ ...prev, selection_2: val }));
-                await loadEF(draft.efSource, scope, draft.main_category_id, draft.sub_category, draft.activity, draft.selection_1, val);
+                await loadEF(draft.source, scope, draft.main_category_id, draft.sub_category, draft.activity, draft.selection_1, val);
               }}
             />
           </div>
@@ -498,21 +497,21 @@ const EditableRow: React.FC<EditableRowProps> = ({
         {isEditing ? (
           <div className="min-w-[120px]">
             <DropdownField
-              value={draft.efSource}
+              value={draft.source}
               options={[
                 { label: "GHG Protocol", value: "GHG Protocol" },
                 { label: "DEFRA", value: "DEFRA" },
               ]}
               onChange={async val => {
-                resetBelow("efSource");
-                setDraft(prev => ({ ...prev, efSource: val }));
+                resetBelow("source");
+                setDraft(prev => ({ ...prev, source: val }));
                 await loadMainCategories(val);
               }}
             />
           </div>
         ) : (
           <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-            {row.efSource || "-"}
+              {row.source || "-"}
           </span>
         )}
       </TableCell>

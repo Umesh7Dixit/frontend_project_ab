@@ -38,7 +38,7 @@ const PreviewTable: React.FC<PreviewTableProps> = ({
       selection_2: obj.selection_2 ?? obj.selection2 ?? "N/A",
 
       ef: obj.ef ?? obj.emission_factor ?? "",
-      efSource: obj.efSource ?? "-",
+      source: obj.source ?? "-",
       scope: obj.scope,
     };
   }
@@ -48,7 +48,6 @@ const PreviewTable: React.FC<PreviewTableProps> = ({
       prev.map((entry) => (entry.id === id ? { ...entry, ...updated } : entry))
     );
   };
-
   return (
     <div className="flex flex-col h-full w-full rounded-3xl bg-white/80 backdrop-blur-xl border border-white/40 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden relative ring-1 ring-black/5">
       <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">

@@ -110,6 +110,8 @@ export default function EmissionTable({
 
     return { processedRows: rows, grandTotal: totalSum };
   }, [emissionData]);
+  const formatEf = (ef: unknown) =>
+    ef != null && !isNaN(Number(ef)) ? Number(ef).toFixed(2) : "-";
 
   return (
     <motion.div
@@ -199,14 +201,14 @@ export default function EmissionTable({
                     );
                   })}
 
-                  <TableCell className="text-right text-xs font-mono text-gray-600">
-                    {row.ef?.toFixed(4) || "-"}
+                  <TableCell className="text-center text-xs font-bold text-emerald-600">
+                    {formatEf(row.ef)}
                   </TableCell>
-                  <TableCell className="text-right text-xs text-gray-500 truncate max-w-[100px]" title={row.ef_source || ""}>
+                  <TableCell className="text-center text-xs text-gray-500 max-w-[100px]" title={row.ef_source || ""}>
                     {row.ef_source || "-"}
                   </TableCell>
 
-                  <TableCell className="text-right font-bold text-xs font-mono text-emerald-700 sticky right-0 md:right-7 bg-white z-20 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.05)]">
+                  <TableCell className="text-center font-bold text-xs font-mono text-emerald-700 sticky right-0 md:right-7 bg-white z-20 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.05)]">
                     {row.rowTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </TableCell>
 

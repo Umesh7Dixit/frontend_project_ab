@@ -84,7 +84,7 @@ export const templateApi = {
       sub_category: item.sub_category,
       ef: item.emission_factor,
       subcategory_id: item.subcategory_id,
-      efSource: "-",
+      source: item.source || "-",
     }));
 
     return mapped;

@@ -19,17 +19,34 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  GHG_BREAKDOWN_MOCK_DATA,
-  SCOPE_COLORS,
-  UNIT_OPTIONS,
-} from "../insights/utils";
-import { ALL_SCOPES, SCOPES } from "@/lib/constants";
+
+import { ALL_SCOPES } from "@/lib/constants";
 
 const COLORS = ["#22c55e", "#15803d", "#0ea5e9", "#f59e0b", "#ef4444"];
 
+const SHORT_NAMES: Record<string, string> = {
+  "purchased goods and services": "Goods",
+  "capital goods": "Capital Goods",
+  "fuel-and-energy-related activities": "Energy",
+  "upstream transportation and distribution": "Upstream",
+  "waste generated in operations": "Waste",
+  "business travel": "Travel",
+  "direct emissions from mobile combustion": "Mobile",
+  "direct emissions from fugitive sources": "Fugitive",
+  "employee commuting": "Commuting",
+  "upstream leased assets": "Upstream Leased",
+  "downstream transportation and distribution": "Downstream",
+  "processing of sold products": "Processing",
+  "use of sold products": "Use of Sold",
+  "end-of-life treatment of sold products": "End-of-Life",
+  "downstream leased assets": "Downstream Leased",
+  "franchises": "Franchises",
+  "investments": "Investments",
+};
+
 interface GHGCompareBreakdownProps {
-  selectedPlants: string[];
+  selectedFacilitiesForCompare: string[];
+  data: any[];
 }
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -43,16 +60,12 @@ const CustomTooltip = ({ active, payload }: any) => {
         <p className="text-sm font-medium">{category}</p>
         {payload.map((p: any) => (
           <div key={p.dataKey} className="flex items-center gap-2 text-xs">
-            {/* <span
-              className="inline-block w-2 h-2 rounded-sm"
-              style={{ background: p.color }}
-            /> */}
             <span
-  className={`inline-block w-2 h-2 rounded-sm bg-[${p.color}]`}
-/>
+              className={`inline-block w-2 h-2 rounded-sm bg-[${p.color}]`}
+            />
 
             {p.dataKey}:{" "}
-            <span className="font-medium">{p.value.toLocaleString()}</span>
+            <span className="font-medium">{Number(p.value).toFixed(2)}</span>
           </div>
         ))}
       </div>
@@ -61,48 +74,12 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-const _renderLegend = () => {
-  const scopes = [
-    { label: SCOPES.SCOPE_1_LABEL, color: SCOPE_COLORS.scope1 },
-    { label: SCOPES.SCOPE_2_LABEL, color: SCOPE_COLORS.scope2 },
-    {
-      label: SCOPES.SCOPE_3_UPSTREAM_LABEL,
-      color: SCOPE_COLORS.scope3Upstream,
-    },
-    {
-      label: SCOPES.SCOPE_3_DOWNSTREAM_LABEL,
-      color: SCOPE_COLORS.scope3Downstream,
-    },
-  ];
-
-  return (
-    <ul className="flex items-center justify-center gap-4 text-xs mt-3 w-full">
-      {scopes.map((s) => (
-        <li key={s.label} className="flex items-center gap-1">
-          {/* <span
-            className="w-3 h-3 inline-block rounded-sm"
-            style={{ background: s.color }}
-          /> */}
-          {/* <span
-            className={`w-3 h-3 inline-block rounded-sm ${s.color ? '' : ''}`}
-            data-color={s.color}
-          /> */}
-          <span className={`w-3 h-3 inline-block rounded-sm bg-[${s.color}]`} />
-
-
-          {s.label}
-        </li>
-      ))}
-    </ul>
-  );
-};
-
 const PlantBreakdownChart = ({
   data,
-  selectedPlants,
+  selectedFacilitiesForCompare,
 }: {
   data: any[];
-  selectedPlants: string[];
+  selectedFacilitiesForCompare: string[];
 }) => (
   <ResponsiveContainer>
     <ComposedChart data={data}>
@@ -110,7 +87,7 @@ const PlantBreakdownChart = ({
       <YAxis tick={{ fontSize: 11 }} />
       <Tooltip content={<CustomTooltip />} />
       <Legend />
-      {selectedPlants.map((plant, i) => (
+      {selectedFacilitiesForCompare.map((plant, i) => (
         <Bar
           key={plant}
           dataKey={plant}
@@ -123,7 +100,7 @@ const PlantBreakdownChart = ({
             style={{ fontSize: "10px", fill: "#374151" }}
             formatter={(label: any) =>
               typeof label === "number" && label !== 0
-                ? label.toLocaleString()
+                ? label.toLocaleString(undefined, { maximumFractionDigits: 2 })
                 : ""
             }
           />
@@ -133,44 +110,58 @@ const PlantBreakdownChart = ({
   </ResponsiveContainer>
 );
 
-const GHGCompareBreakdown = ({ selectedPlants }: GHGCompareBreakdownProps) => {
-  const [unit, setUnit] = useState<string>(UNIT_OPTIONS[0]);
+const GHGCompareBreakdown = ({ selectedFacilitiesForCompare, data }: GHGCompareBreakdownProps) => {
   const [scope, setScope] = useState<string>("scope1");
 
-  // 🔑 Build per-plant dataset
-  const buildData = (raw: typeof GHG_BREAKDOWN_MOCK_DATA) =>
-    raw.map((row) => {
-      const obj: Record<string, any> = {
-        category: row.category,
-        scope: row.scope,
-      };
-      selectedPlants.forEach((plant, i) => {
-        // Fake values for demo → offset with +i*100
-        obj[plant] = row.value + i * 100;
-      });
-      return obj;
+  const processedData = React.useMemo(() => {
+    if (!data || data.length === 0) return [];
+
+    let targetScope = "";
+    if (scope === "scope1") targetScope = "Scope 1";
+    else if (scope === "scope2") targetScope = "Scope 2";
+    else if (scope.includes("scope3")) targetScope = "Scope 3";
+
+    const filtered = data.filter(d => d.scope_name === targetScope);
+
+    const catMap = new Map<string, any>();
+
+    filtered.forEach(row => {
+      let rawCategory = (row.main_category || "Uncategorized").trim();
+
+      // Clean up category name similar to GHGBreakdownChart
+      let cleanName = rawCategory
+        .replace(/Direct Emissions from /i, "")
+        .replace(/Indirect Emissions from /i, "")
+        .replace(/Category \d+:\s*/i, "")
+        .trim();
+
+      const lowerName = cleanName.toLowerCase();
+      if (SHORT_NAMES[lowerName]) {
+        cleanName = SHORT_NAMES[lowerName];
+      } else {
+        if (lowerName.includes("purchased goods")) cleanName = "Goods";
+        else if (lowerName.includes("upstream transportation")) cleanName = "Upstream";
+        else if (lowerName.includes("fugitive sources")) cleanName = "Fugitive";
+        else if (lowerName.includes("downstream transportation")) cleanName = "Downstream";
+      }
+
+      const facility = row.facility_name;
+
+      if (selectedFacilitiesForCompare.includes(facility)) {
+        const existing = catMap.get(cleanName) || { category: cleanName, scope: scope };
+        existing[facility] = (existing[facility] || 0) + Number(row.total_carbon || 0);
+        catMap.set(cleanName, existing);
+      }
     });
 
-  const data = buildData(GHG_BREAKDOWN_MOCK_DATA);
+    return Array.from(catMap.values());
+  }, [data, scope, selectedFacilitiesForCompare]);
 
   return (
     <Card className="flex-1 bg-white/60 backdrop-blur-md shadow-xl rounded-2xl">
       <CardHeader className="flex flex-col sm:flex-row items-center justify-between">
         <CardTitle>GHG Breakdown Comparison</CardTitle>
         <div className="flex gap-2">
-          <Select value={unit} onValueChange={setUnit}>
-            <SelectTrigger className="w-[120px] text-xs">
-              <SelectValue placeholder="Select Unit" />
-            </SelectTrigger>
-            <SelectContent>
-              {UNIT_OPTIONS.map((u) => (
-                <SelectItem key={u} value={u}>
-                  {u}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
           <Select value={scope} onValueChange={setScope}>
             <SelectTrigger className="w-[140px] text-xs">
               <SelectValue placeholder="Select Scope" />
@@ -187,25 +178,12 @@ const GHGCompareBreakdown = ({ selectedPlants }: GHGCompareBreakdownProps) => {
       </CardHeader>
 
       <CardContent className="h-[260px]">
-        {scope === "Scope 3" ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
-            <PlantBreakdownChart
-              data={data.filter((d) => d.scope.includes("Upstream"))}
-              selectedPlants={selectedPlants}
-            />
-            <PlantBreakdownChart
-              data={data.filter((d) => d.scope.includes("Downstream"))}
-              selectedPlants={selectedPlants}
-            />
-          </div>
-        ) : (
-          <div className="h-full">
-            <PlantBreakdownChart
-              data={data.filter((d) => d.scope.includes(scope))}
-              selectedPlants={selectedPlants}
-            />
-          </div>
-        )}
+        <div className="h-full">
+          <PlantBreakdownChart
+            data={processedData}
+            selectedFacilitiesForCompare={selectedFacilitiesForCompare}
+          />
+        </div>
       </CardContent>
     </Card>
   );

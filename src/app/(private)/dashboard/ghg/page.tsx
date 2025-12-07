@@ -7,10 +7,9 @@ export const metadata = {
 };
 
 const GHGDashboardPage = () => {
-  // const mainDashboard
   return (
     <LayoutWrapper>
-      <GHGDashboard />
+      <GHGDashboard main={true} />
     </LayoutWrapper>
   );
 };

@@ -18,8 +18,6 @@ export const ALL_SCOPES = [
     { label: SCOPE_1_LABEL, key: SCOPE_1_KEY },
     { label: SCOPE_2_LABEL, key: SCOPE_2_KEY },
     { label: SCOPE_3_LABEL, key: SCOPE_3_KEY },
-    { label: SCOPE_3_UPSTREAM_LABEL, key: SCOPE_3_UPSTREAM_KEY },
-    { label: SCOPE_3_DOWNSTREAM_LABEL, key: SCOPE_3_DOWNSTREAM_KEY },
 ]
 
 export const SCOPES = {

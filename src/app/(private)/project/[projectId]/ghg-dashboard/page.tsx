@@ -11,7 +11,7 @@ const ProjectDashboard = async () => {
 
   return (
     <LayoutWrapper>
-      <GHGDashboard />
+      <GHGDashboard main={false} />
     </LayoutWrapper>
   );
 };
