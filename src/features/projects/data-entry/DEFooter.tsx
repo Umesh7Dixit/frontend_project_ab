@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import { useExcel } from "@/lib/hooks/useExcel";
 import { MotionButton } from "@/components/MotionItems";
+
+import { useRouter } from "next/navigation";
 import { EmissionDataType } from "./utils";
 import axios from "@/lib/axios/axios";
 import { toast } from "sonner";
@@ -25,6 +27,8 @@ type DEFooterProps = {
   emissionData: EmissionDataType[];
   handlePreview?: () => void;
 };
+
+
 
 export default function DEFooter({
   onClear,
@@ -60,6 +64,9 @@ export default function DEFooter({
     }
   };
 
+const router = useRouter();
+
+
   const handleSave = async () => {
     setSaved?.(true);
     const userId = getUserId();
@@ -69,7 +76,16 @@ export default function DEFooter({
       return;
     }
     const res = await upsertBatch(userId, batch);
-    res?.issuccessful ? toast.success("Saved successfully!") : toast.error("Save failed.");
+
+    if( res?.issuccessful)
+    {
+      toast.success("Saved successfully!")
+      router.push(`/project/${getProjectId()}/data-control`);
+
+    }else{
+      toast.error("Save failed.");
+    }
+
   };
 
   return (
