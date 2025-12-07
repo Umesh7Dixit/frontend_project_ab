@@ -20,11 +20,12 @@ export type KPIProps = {
 };
 
 export const SCOPE_COLORS = {
-    scope1: "#3B82F6", // Blue
-    scope2: "#F59E0B", // Amber
-    scope3Upstream: "#4F46E5", // Indigo
-    scope3Downstream: "#10B981", // Emerald
-    total: "#2A5B59", // Dark Green
+  scope1: "#3B82F6", // Blue
+  scope2: "#F59E0B", // Amber
+  scope3: "#4F46E5", // Amber
+  scope3Upstream: "#4F46E5", // Indigo
+  scope3Downstream: "#10B981", // Emerald
+  total: "#2A5B59", // Dark Green
 };
 
 

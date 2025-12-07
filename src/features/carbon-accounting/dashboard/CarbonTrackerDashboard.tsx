@@ -89,6 +89,7 @@ export default function CarbonTrackerDashboard() {
             membersMap={membersMap}
             setMembersMap={setMembersMap}
             projectId={projectId}
+            setOriginalSnapshot={setOriginalSnapshot}
           />
           <ManageApprovalFlow
             membersMap={membersMap}

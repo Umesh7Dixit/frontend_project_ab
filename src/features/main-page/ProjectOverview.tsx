@@ -262,6 +262,9 @@ const ProjectOverview = () => {
   };
 
   const handleProjectClick = (projectId: number) => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("projectId", projectId.toString());
+    }
     router.push(`/project/${projectId}/data-control`);
   };
 
@@ -450,7 +453,6 @@ const ProjectOverview = () => {
         >
           <div className="flex items-center justify-between p-1.5">
             <h2 className="text-base font-bold">Open Projects</h2>
-
             <div className="flex items-center gap-2">
               <button
                 aria-label="Prev page"

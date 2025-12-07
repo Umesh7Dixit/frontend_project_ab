@@ -1,16 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import axios from "@/lib/axios/axios";
-
-type ProjectSummary = {
-  project_name: string;
-  total_carbon: number;
-  scope_1_total: number;
-  scope_2_total: number;
-  scope_3_total: number;
-};
 
 type KPIProps = {
   title: string;
@@ -19,59 +9,43 @@ type KPIProps = {
   unit: string;
 };
 
-const GHGDashboardKPI = ({ projectId }: { projectId: number }) => {
-  const [data, setData] = useState<ProjectSummary | null>(null);
+type Props = {
+  total: number;
+  scope1: number;
+  scope2: number;
+  scope3: number;
+};
 
-  const fetchKPI = async () => {
-    try {
-      const res = await axios.post("/get_project_total_emissions_summary", {
-        p_project_id: projectId,
-      });
-      setData(res.data.data.templates[0]);
-    } catch (e) {
-      console.error("Failed to fetch KPI:", e);
-    }
-  };
-
-  useEffect(() => {
-    fetchKPI();
-  }, []);
-
+const GHGDashboardKPI = ({ total, scope1, scope2, scope3 }: Props) => {
   const kpis: KPIProps[] = [
     {
       title: "Total",
       subtitle: "Scope 1, 2 & 3",
-      value: Number(data?.total_carbon).toFixed(0),
+      value: total.toLocaleString(undefined, { maximumFractionDigits: 0 }),
       unit: "tCO₂e",
     },
     {
       title: "Scope 1",
       subtitle: "",
-      value: Number(data?.scope_1_total).toFixed(0),
+      value: scope1.toLocaleString(undefined, { maximumFractionDigits: 0 }),
       unit: "tCO₂e",
     },
     {
       title: "Scope 2",
       subtitle: "",
-      value: Number(data?.scope_2_total).toFixed(0),
+      value: scope2.toLocaleString(undefined, { maximumFractionDigits: 0 }),
       unit: "tCO₂e",
     },
     {
-      title: "Scope 3 (Upstream)",
+      title: "Scope 3",
       subtitle: "",
-      value: Number(data?.scope_3_total).toFixed(0),
+      value: scope3.toLocaleString(undefined, { maximumFractionDigits: 0 }),
       unit: "tCO₂e",
-    },
-    {
-      title: "Scope 3 (Downstream)",
-      subtitle: "",
-      value: Number(data?.scope_3_total).toFixed(0),
-      unit: "tCO₂e",
-    },
+    }
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
+    <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
       {kpis.map((kpi, idx) => (
         <motion.div
           key={kpi.title}

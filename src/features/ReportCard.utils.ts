@@ -1,4 +1,5 @@
 import axios from "@/lib/axios/axios";
+import { toast } from "sonner";
 interface TemplateItem {
   project_name: string;
   reporting_period_start: string;
@@ -22,20 +23,21 @@ interface PdfRow {
 }
 interface GeneratePdfPayload {
   reportingPeriod: string;
-  criteria: string;
   otherSources: string;
   rows: PdfRow[];
 }
 
 export async function downloadReport(project_id: number): Promise<void> {
   try {
+    // TODO: just call only once API to generate and get PDF
     const { data } = await axios.post<Res>("/get_project_category_totals", {
       project_id,
     });
     const templates = data?.data?.templates ?? [];
-
+    console.log(templates)
     if (templates.length === 0) {
-      throw new Error("No template data returned from API.");
+      toast.error("No data found");
+      // throw new Error("No template data returned from API.");
     }
 
     const { reporting_period_start, reporting_period_end } = templates[0];
@@ -52,7 +54,6 @@ export async function downloadReport(project_id: number): Promise<void> {
       )
       .join(" to ");
 
-    const criteria = "IJM GHG Procedure/1.1 – ISO 14064-1:2018";
     const otherSources = "N/A";
 
     const rows: GeneratePdfPayload["rows"] = templates.map((t) => {
@@ -67,7 +68,6 @@ export async function downloadReport(project_id: number): Promise<void> {
 
     const payload: GeneratePdfPayload = {
       reportingPeriod,
-      criteria,
       otherSources,
       rows,
     };

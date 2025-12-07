@@ -8,6 +8,7 @@ export const metadata = {
 };
 
 const ProjectDashboard = async () => {
+
   return (
     <LayoutWrapper>
       <GHGDashboard />

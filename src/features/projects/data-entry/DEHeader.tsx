@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import { Edit, Save, UploadCloud } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { MotionButton } from "@/components/MotionItems";
 import { useUser } from "@/lib/context/EntriesContext";
@@ -32,7 +32,9 @@ export default function DEHeader({
   emissionData
 }: HeaderProps) {
   const scopeNum = scope.split("-")[1] ?? "1";
-  const title = `Scope ${scopeNum} Emission Data`;
+  const searchParams = useSearchParams();
+  const search = searchParams.get('scope')
+  const title = `Scope ${search} Emission Data`;
   const router = useRouter();
 
   const handleEditButton = () => {
@@ -48,12 +50,32 @@ export default function DEHeader({
 
   const handleSubmit = async () => {
     const userId = getUserId();
+
     if (saved) {
-      const batch = buildBatchPayload(emissionData);
-      if (batch.length) await upsertBatch(userId, batch);
+      toast.success("Submitted successfully!");
+      router.push(`/project/${getProjectId()}/data-control`);
+      return;
     }
-    toast.success("Submitted successfully!");
-    router.push(`/project/${getProjectId()}/data-control`);
+
+    try {
+      const batch = buildBatchPayload(emissionData);
+
+      if (batch.length === 0) {
+        toast.error("No data to submit");
+        return;
+      }
+      const res = await upsertBatch(userId, batch);
+
+      if (res?.issuccessful) {
+        toast.success("Submitted successfully!");
+        router.push(`/project/${getProjectId()}/data-control`);
+      } else {
+        toast.error(res?.message || "Submission failed");
+      }
+
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Something went wrong");
+    }
   };
 
   return (

@@ -5,7 +5,6 @@ import { motion } from "motion/react";
 import { ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
 import { SUBCATEGORIES } from "./utils";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 type CategoryTabsProps = {
   categories: string[];
@@ -44,8 +43,6 @@ export default function CategoryTabs({
   };
 
   useEffect(() => {
-    if (currentScope === 3 && selectedMain) return;
-
     const activeElement = document.getElementById(`tab-${activeCategory}`);
     if (activeElement && scrollContainerRef.current) {
       const container = scrollContainerRef.current;
@@ -65,20 +62,13 @@ export default function CategoryTabs({
 
 
   const handleMainCategoryClick = (cat: string) => {
-    if (currentScope === 3) {
-      setSelectedMain(cat);
-    } else {
-      onChange(cat);
-    }
+    onChange(cat);
   };
 
   const handleSubCategoryClick = (sub: string) => {
     onChange(sub);
   };
 
-  const handleBack = () => {
-    setSelectedMain(null);
-  };
   if (currentScope === 3 && selectedMain) {
     const subs = SUBCATEGORIES[selectedMain] || [];
     return (
@@ -88,14 +78,6 @@ export default function CategoryTabs({
         exit={{ opacity: 0, scale: 0.95 }}
         className={cn("w-full mt-4 px-4 py-3 rounded-xl  backdrop-blur-md border border-white/20 shadow-sm flex items-center gap-3 overflow-hidden", className)}
       >
-        <button
-          onClick={handleBack}
-          className="flex items-center gap-1 pr-3 py-1.5 border-r border-gray-300 text-gray-500 hover:text-gray-800 transition-colors text-xs font-semibold"
-        >
-          <ArrowLeft size={14} />
-          Back
-        </button>
-
         <div className="px-3 py-1.5 rounded bg-emerald-100 text-emerald-800 text-xs font-bold whitespace-nowrap">
           {selectedMain}
         </div>
@@ -113,9 +95,6 @@ export default function CategoryTabs({
               {sub}
             </button>
           ))}
-          {subs.length === 0 && (
-            <span className="text-xs text-gray-400 italic">No subcategories found</span>
-          )}
         </div>
       </motion.div>
     );
@@ -153,7 +132,7 @@ export default function CategoryTabs({
               className={cn("relative px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all duration-200 flex-shrink-0", isActive
                 ? "text-white bg-[#0b1f1d]/90"
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/50"
-                )}
+              )}
             >
               {isActive && (
                 <motion.div

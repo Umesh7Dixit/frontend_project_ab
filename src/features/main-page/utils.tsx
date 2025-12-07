@@ -24,7 +24,8 @@ export interface ProjectOverviewProps {
 }
 
 
-export type KPIGridProps = object
+export interface KPIGridProps {
+}
 
 export interface ProjectDetailsModalProps {
   open: boolean;
@@ -409,7 +410,7 @@ export const buildBatchPayload = (emissionData: EmissionDataType[]) => {
 
     Object.entries(row.monthly_data).forEach(([month, obj]: any) => {
       const quantity = obj?.quantity;
-      if (!quantity && quantity !== 0) return;
+      if (quantity === null || quantity === undefined || quantity === "") return;
 
       const clean = month.replace(/\u00A0/g, " ").trim();
       const [mon, yr] = clean.split(" ");
@@ -428,13 +429,19 @@ export const buildBatchPayload = (emissionData: EmissionDataType[]) => {
   return batch;
 };
 
-export const upsertBatch = (userId: number, batch: any[]) => {
-  return axios.post("/upsert_activity_data_batch", {
-    p_project_id: getProjectId(),
-    p_user_id: userId,
-    p_data_batch: batch,
-  });
+export const upsertBatch = async (userId: number, batch: any[]) => {
+  try {
+    const res = await axios.post("/upsert_activity_data_batch", {
+      p_project_id: getProjectId(),
+      p_user_id: userId,
+      p_data_batch: batch,
+    });
+    return res.data;
+  } catch (error: any) {
+    return error?.response?.data ?? { issuccessful: false, message: "Request failed" };
+  }
 };
+
 
 export const transformTemplatesToRows = (templates: any[]) => {
   return templates.map((item) => {
@@ -450,7 +457,7 @@ export const transformTemplatesToRows = (templates: any[]) => {
 
     const months = item.monthly_data;
     for (const month in months) {
-      const safeMonth = month.replace(" ", "\u00A0"); 
+      const safeMonth = month.replace(" ", "\u00A0");
       row[safeMonth] = months[month]?.quantity ?? "";
     }
 

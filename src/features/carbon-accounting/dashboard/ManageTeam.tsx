@@ -131,7 +131,8 @@ export default function ManageTeam({
   const addUser = (user: UiUser) => {
     setSelectedUsers((prev) => {
       const m = new Map(prev);
-      m.set(user.id, { ...user, isProjectMember: true });
+      // Force role to Member so it shows up in ActivityPanel, use separate permission_level
+      m.set(user.id, { ...user, isProjectMember: true, role: "Member", permission_level: "viewer" });
       return m;
     });
     setSearch("");
@@ -139,12 +140,12 @@ export default function ManageTeam({
     setSearchResults([]);
   };
 
-  const changeRole = (id: string, role: roles) =>
+  const changeRole = (id: string, permission_level: string) =>
     setSelectedUsers((prev) => {
       const m = new Map(prev);
       const u = m.get(id);
       if (!u) return prev;
-      m.set(id, { ...u, role });
+      m.set(id, { ...u, permission_level });
       return m;
     });
 
@@ -165,7 +166,7 @@ export default function ManageTeam({
     const additions = selected.filter((u) => !originalSnapshot.has(u.id));
     const updates = selected.filter((u) => {
       const prev = originalSnapshot.get(u.id);
-      return prev && prev.role !== u.role;
+      return prev && prev.permission_level !== u.permission_level;
     });
     const removals = Array.from(originalSnapshot.values()).filter(
       (o) => !selectedUsers.has(o.id)
@@ -183,14 +184,14 @@ export default function ManageTeam({
           p_project_id: Number(projectId),
           p_user_id: Number(a.id),
           p_role_name: 'Member',
-          p_permission_level: a.role
+          p_permission_level: a.permission_level || 'viewer'
         });
 
       for (const u of updates)
         await axios.post("/update_project_member_permission", {
           p_project_id: Number(projectId),
           p_member_user_id: Number(u.id),
-          p_new_permission_level: u.role === "Owner" ? 3 : u.role === "editor" ? 2 : 1,
+          p_new_permission_level: u.permission_level === "Owner" ? 3 : u.permission_level === "editor" ? 2 : 1,
         });
       if (setOriginalSnapshot) {
         setOriginalSnapshot(new Map(selectedUsers));

@@ -11,7 +11,8 @@ import {
   MessageSquareWarning,
   ShieldCheck,
   HelpCircle,
-  type LucideIcon
+  type LucideIcon,
+  CircleCheck
 } from "lucide-react";
 
 type StatusConfig = {
@@ -31,19 +32,23 @@ const statusConfig: Record<string, StatusConfig> = {
     animate: true,
   },
   "Data collection completed": {
-    color: "bg-indigo-50 text-indigo-700 border-indigo-200",
+    color: "bg-indigo-100 text-indigo-700 border-indigo-300",
     icon: Database,
   },
+  "Completed": {
+    color: "bg-green-100 text-green-700 border-green-300",
+    icon: CircleCheck,
+  },
   "Approval pending": {
-    color: "bg-amber-50 text-amber-700 border-amber-200",
+    color: "bg-amber-100 text-amber-700 border-amber-300",
     icon: Clock,
   },
   "Comments shared by auditor": {
-    color: "bg-rose-50 text-rose-700 border-rose-200",
+    color: "bg-rose-100 text-rose-700 border-rose-300",
     icon: MessageSquareWarning,
   },
   "Verified": {
-    color: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    color: "bg-emerald-100 text-emerald-700 border-emerald-300",
     icon: ShieldCheck,
   },
 };
@@ -58,10 +63,8 @@ const StatusBadge = ({ status }: { status: string }) => {
   const Icon = config.icon;
 
   return (
-    <span
-      className={`inline-flex mt-0.5 items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${config.color}`}
-    >
-      {config.animate ? <Icon className="w-3 h-3 animate-spin" /> : <Icon className="w-3 h-3" />}
+    <span className={`inline-flex mt-1 items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${config.color}`}>
+      {config.animate ? <Icon className="size-3 animate-spin" /> : <Icon className="size-3" />}
       {status}
     </span>
   );

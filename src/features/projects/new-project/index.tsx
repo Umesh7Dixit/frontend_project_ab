@@ -110,7 +110,7 @@ export default function NewProject() {
           return [];
         }
       })();
-      
+
       const projectData = {
         facility_id: data.facilityId,
         project_name: data.projectName,
@@ -124,6 +124,7 @@ export default function NewProject() {
         reporting_protocol: data.protocol,
         base_year: Number(data.baseYear),
         team_assignments: teamAssignments,
+        industry: data.industry,
 
         base_year_emissions: (data.baseYearEmissions ?? []).map(e => ({
           scope: e.scope,
@@ -206,6 +207,7 @@ export default function NewProject() {
     (s) => s.id === activeSectionId
   );
 
+  // TODO : Fix for 100% completion
   const allFieldsFilled = Object.values(getValues()).every(v => v !== undefined && v !== "");
 
   return (
