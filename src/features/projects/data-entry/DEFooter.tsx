@@ -69,7 +69,7 @@ export default function DEFooter({
       return;
     }
     const res = await upsertBatch(userId, batch);
-    res.data?.issuccessful ? toast.success("Saved successfully!") : toast.error("Save failed.");
+    res?.issuccessful ? toast.success("Saved successfully!") : toast.error("Save failed.");
   };
 
   return (
