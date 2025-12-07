@@ -6,7 +6,7 @@ import {
   Edit3,
   Copy,
   Plus,
-  Save,
+  // Save,
   ArrowRight,
   Send,
 } from "lucide-react";
@@ -25,7 +25,8 @@ import { toast } from "sonner";
 import { MotionButton } from "@/components/MotionItems";
 import { useUser } from "@/lib/context/EntriesContext";
 import { templateApi } from "@/lib/api/templates";
-import { projectId } from "@/lib/jwt";
+// import { projectId } from "@/lib/jwt";
+import { getProjectId } from "@/lib/jwt";
 const PreviewFooter: React.FC<PreviewFooterProps> = ({
   mode = "preview",
   onEditUse,
@@ -53,6 +54,9 @@ const PreviewFooter: React.FC<PreviewFooterProps> = ({
   };
   const { entries } = useUser();
   const disableBack = currentScopeIndex === 0 || selectedScopes.length <= 1;
+
+  const projectId = getProjectId();
+
   const disableNext =
     currentScopeIndex === selectedScopes.length - 1 ||
     selectedScopes.length <= 1;
