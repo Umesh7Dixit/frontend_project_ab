@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import Image from "next/image";
+// import Image from "next/image";
 import {
   CarbonTransactionScopes,
   Icon,
@@ -20,7 +20,7 @@ type Props = {
 }
 export default function ScopeCards({
   visibleScopes,
-  projectId,
+  // projectId,
   progressObj,
 }: Props) {
   const router = useRouter();
@@ -45,7 +45,8 @@ export default function ScopeCards({
     <div className="grid gap-5 h-fit">
       {scopes.map(
         (
-          { id, title, desc, tone, Icon, file, isClickable },
+          // { id, title, desc, tone, Icon, file, isClickable },
+          { id, title, desc, tone, Icon  },
           idx
         ) => {
           const progress =
@@ -86,7 +87,7 @@ export default function ScopeCards({
                 {desc}
               </p>
 
-              <div className="mt-3 flex items-center justify-between">
+              {/* <div className="mt-3 flex items-center justify-between">
                 <div className="mt-2 flex flex-wrap gap-2">
                   {file && (
                     <a
@@ -104,7 +105,7 @@ export default function ScopeCards({
                     </a>
                   )}
                 </div>
-              </div>
+              </div> */}
 
               <ScopeProgressBar progress={progress} />
             </motion.article>
