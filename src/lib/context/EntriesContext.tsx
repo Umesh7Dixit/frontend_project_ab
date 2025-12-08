@@ -28,7 +28,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     const [scopedEntries, setScopedEntries] = useState<any[]>([]);
     const [addedEntries, setAddedEntries] = useState<any[]>([]);
     const [isViewer, setIsViewer] = useState(false);
-    
+    const [userId, setUserId] = useState<number | null>(getUserId());
+
     async function fetchUser(user_id: number) {
         try {
             const res = await axios.post<UserApiResponse>(
@@ -47,11 +48,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     useEffect(() => {
-        const userId = getUserId();
-        if (userId) {
-            fetchUser(Number(userId));
-        }
-    }, []);
+        if (userId) fetchUser(userId);
+    }, [userId]);
 
     return (
         <UserContext.Provider value={{ isViewer, setIsViewer, user, setUser, entries, setEntries, addedEntries, setAddedEntries, scopedEntries, setScopedEntries }}>
