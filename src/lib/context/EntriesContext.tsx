@@ -1,18 +1,16 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
-import axios from "@/lib/axios/axios";
-import {  getUserId } from "../jwt";
-import { UserApiResponse, UserContextType, UserTemplate } from "./utils";
+import React, { createContext, useContext, useState } from "react";
+import { UserContextType, UserTemplate } from "./utils";
 
 const UserContext = createContext<UserContextType>({
     user: null,
-    setUser: () => {},
+    setUser: () => { },
     entries: [],
     scopedEntries: [],
-    setEntries: () => {},
+    setEntries: () => { },
     addedEntries: [],
-    setScopedEntries: () => {},
+    setScopedEntries: () => { },
     isViewer: false,
     setAddedEntries: () => { },
     setIsViewer: () => { },
@@ -28,28 +26,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     const [scopedEntries, setScopedEntries] = useState<any[]>([]);
     const [addedEntries, setAddedEntries] = useState<any[]>([]);
     const [isViewer, setIsViewer] = useState(false);
-    const [userId, setUserId] = useState<number | null>(getUserId());
-
-    async function fetchUser(user_id: number) {
-        try {
-            const res = await axios.post<UserApiResponse>(
-                "/getUserInfoByUserID",
-                { user_id }
-            );
-            const templates = res?.data?.data?.templates;
-
-            if (templates?.length) {
-                setUser(templates[0]);
-            }
-
-        } catch (error) {
-            console.error("Error fetching user info:", error);
-        }
-    }
-
-    useEffect(() => {
-        if (userId) fetchUser(userId);
-    }, [userId]);
 
     return (
         <UserContext.Provider value={{ isViewer, setIsViewer, user, setUser, entries, setEntries, addedEntries, setAddedEntries, scopedEntries, setScopedEntries }}>
