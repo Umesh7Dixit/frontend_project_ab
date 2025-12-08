@@ -1,5 +1,6 @@
 import axios from "@/lib/axios/axios";
 import { toast } from "sonner";
+import { getProjectId } from "@/lib/jwt";
 interface TemplateItem {
   project_name: string;
   reporting_period_start: string;
@@ -19,10 +20,11 @@ interface Res {
 
 export async function downloadReport(project_id: number): Promise<void> {
   try {
+    const pid = getProjectId()
     const data = await axios.post<Blob>(
       "/get_project_category_carbon_with_facilities",
       {
-        project_id,
+        p_project_id:pid,
       },
       {
         responseType: "blob",

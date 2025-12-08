@@ -18,13 +18,17 @@ import {
 import axios from "@/lib/axios/axios";
 import { toast } from "sonner";
 import { userId } from "@/lib/jwt";
+// import { StatusBadge } from "./OverallCompletion";
+import { StatusBadge } from "./OverallCompletion";
 
 
-export default function ManageApprovalFlow({ membersMap, projectId }: ManageApprovalFlowProps) {
+
+
+export default function ManageApprovalFlow({ membersMap, projectId, status }: ManageApprovalFlowProps) {
   const [flow, setFlow] = useState<FlowStep[]>([
-    { id: "submitted", label: "Submitted", fixed: true, participants: [] },
+    { id: "submitted", label: "Initiated", fixed: true, participants: [] },
     { id: "approver", label: "Approver", fixed: false, participants: [] },
-    { id: "pending", label: "Pending", fixed: false, participants: [] },
+    // { id: "pending", label: "Pending", fixed: false, participants: [] },
     { id: "approved", label: "Approved", fixed: true, participants: [] },
   ]);
 
@@ -35,23 +39,42 @@ export default function ManageApprovalFlow({ membersMap, projectId }: ManageAppr
       return role === "internal auditor" || role === "external auditor";
     });
     if (filtered.length === 0) return null;
-    const pick = filtered[0];
-    return {
-      id: pick.id,
-      name: pick.name,
-      role: pick.role.toLowerCase(),
-    };
+    // const pick = filtered[0];
+    // return {
+    //   id: pick.id,
+    //   name: pick.name,
+    //   role: pick.role.toLowerCase(),
+    // };
+
+        return filtered.map(a => ({
+      id: a.id,
+      name: a.name,
+      role: a.role.toLowerCase(),
+    }));
+
+
+
   }, [membersMap]);
 
   useEffect(() => {
-    if (!defaultAuditor) return;
-    setFlow((prev) =>
-      prev.map((s) =>
+    // if (!defaultAuditor) return;
+    if (!defaultAuditor || defaultAuditor.length === 0) return;
+    // setFlow((prev) =>
+    //   prev.map((s) =>
+    //     s.id === "approver" && s.participants.length === 0
+    //       ? { ...s, participants: [defaultAuditor] }
+    //       : s
+    //   )
+    // );
+
+    setFlow(prev =>
+      prev.map(s =>
         s.id === "approver" && s.participants.length === 0
-          ? { ...s, participants: [defaultAuditor] }
+          ? { ...s, participants: [...defaultAuditor] }
           : s
       )
     );
+
   }, [defaultAuditor]);
 
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
@@ -176,11 +199,66 @@ export default function ManageApprovalFlow({ membersMap, projectId }: ManageAppr
         <div className="flex flex-col items-center">
           {flow.map((step, idx) => (
             <div key={step.id} className="flex flex-col items-center">
-              <div
+              {/* <div
                 className={`text-xs font-medium mb-2 px-3 py-1 rounded-md ${step.fixed ? "bg-gray-200 text-gray-700" : "text-gray-600"}`}
               >
                 {step.label}
+              </div> */}
+
+              <div className="flex flex-col items-center gap-1 mb-2">
+                
+ 
+
+
+              {step.id !== "approved" && (
+                <div
+                  className={`text-xs font-medium mb-2 px-3 py-1 rounded-md ${step.fixed ? "bg-gray-200 text-gray-700" : "text-gray-600"}`}
+                >
+                  {step.label}
+                </div>
+              )}
+
+              {step.id === "approved" && (
+                status === "Completed"
+                  ? <StatusBadge status="Completed" />
+                  : <StatusBadge status="Approval pending" />
+              )}
+
+
+
+
+
+                  {/* {step.id !== "approved" && (
+                    <div
+                      className={`text-xs font-medium px-3 py-1 rounded-md ${
+                        step.fixed
+                          ? "bg-gray-200 text-gray-700"
+                          : "bg-gray-200 text-gray-700"
+                      }`}
+                    >
+                      {step.label}
+                    </div>
+                  )}
+
+                  {step.id === "approved" && (
+                    <div
+                      className="text-xs font-medium px-3 py-1 rounded-md bg-gray-200 text-gray-700"
+                    >
+                      {status === "Completed" ? "Approved" : "Approval Pending"}
+                    </div>
+                  )}
+
+              {step.id === "approved" && (
+                <div className="text-xs font-medium mb-2 px-3 py-1 rounded-md bg-gray-200 text-gray-700">
+                  {status === "Completed"
+                    ? <StatusBadge status="Completed" />
+                    : <StatusBadge status="Approval pending" />}
+                </div>
+              )} */}
+
+
               </div>
+
 
               <div className="flex items-center gap-2 flex-wrap justify-center">
                 {step.participants.map((p) => (
@@ -218,6 +296,10 @@ export default function ManageApprovalFlow({ membersMap, projectId }: ManageAppr
                   </Button>
                 )}
               </div>
+
+              
+
+              
 
               {idx < flow.length - 1 && (
                 <div className="h-8 px-[1px] bg-gray-400 my-3" />

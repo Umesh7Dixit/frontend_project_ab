@@ -16,6 +16,7 @@ export type FlowStep = {
 export type ManageApprovalFlowProps = {
   membersMap?: Map<string, UiUser>;
   projectId: number;
+  status?: string;
 };
 export type RemoveAuditorPayload = {
   p_project_id: number;

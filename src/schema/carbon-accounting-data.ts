@@ -26,7 +26,7 @@ export const CarbonTransactionScopes = [
         status: "Completed - Verified",
         tone: "sky" as Icon,
         Icon: Recycle,
-        file: "sample.pdf",
+        // file: "sample.pdf",
     },
 ]
 
