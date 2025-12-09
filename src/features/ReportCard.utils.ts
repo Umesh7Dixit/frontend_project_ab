@@ -1,5 +1,4 @@
 import axios from "@/lib/axios/axios";
-import { toast } from "sonner";
 interface TemplateItem {
   project_name: string;
   reporting_period_start: string;
@@ -9,11 +8,6 @@ interface TemplateItem {
   total_quantity: string;
   unit_name: string;
   total_carbon_emission: string;
-}
-interface Res {
-  data: {
-    templates: TemplateItem[];
-  };
 }
 
 

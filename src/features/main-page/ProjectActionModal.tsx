@@ -35,7 +35,6 @@ const ProjectActionModal: React.FC<ProjectActionModalProps> = ({
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [taskHeader, setTaskHeader] = useState<TaskHeader | null>(null);
-  const [progress, setProgress] = useState<number | null>(null);
   const router = useRouter();
   useEffect(() => {
     if (scrollRef.current) {
@@ -43,19 +42,19 @@ const ProjectActionModal: React.FC<ProjectActionModalProps> = ({
     }
   }, [comments]);
 
-  useEffect(() => {
-    if (!project) return;
-    async function fetchProgress() {
-      if (!project) return;
-      try {
-        const prj = await getProjectProgress(project.project_id);
-        setProgress(prj.overall);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    fetchProgress();
-  }, []);
+  // useEffect(() => {
+  //   if (!project) return;
+  //   async function fetchProgress() {
+  //     if (!project) return;
+  //     try {
+  //       const prj = await getProjectProgress(project.project_id);
+  //       // setProgress(prj.overall);
+  //     } catch (e) {
+  //       console.error(e);
+  //     }
+  //   }
+  //   fetchProgress();
+  // }, []);
 
   if (!project) return null;
 
@@ -125,22 +124,23 @@ const ProjectActionModal: React.FC<ProjectActionModalProps> = ({
   function handleRaiseRequest() {
     handleNavigation("/requests/raise-request");
   }
+
   const step = (() => {
-    if (progress == null) return null;
-    if (progress < 33) return 0;
-    if (progress < 66) return 1;
-    if (progress < 100) return 2;
-    return 3;
+    if (taskHeader?.task_type === "data required") return 0;
+    if (taskHeader?.task_type === "Clarification needed") return 1;
+    if (taskHeader?.task_type === "Review Needed") return 2;
+    // return 3;
   })();
 
   useEffect(() => {
-    if (!project || step !== 1) return;
+    if (!project) return;
     setLoading(true);
     getTaskHeader(project.task_id).then((res: TaskHeader) => setTaskHeader(res));
     getTaskConv(project.task_id)
       .then(setComments)
       .finally(() => setLoading(false));
-  }, []);
+  }, [project]);
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -302,9 +302,9 @@ const ProjectActionModal: React.FC<ProjectActionModalProps> = ({
         }
         {step === 0 && (
           <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
-            <p className="text-sm font-medium text-gray-700">
+            {/* <p className="text-sm font-medium text-gray-700">
               Transport data for June is missing. Please check it.
-            </p>
+            </p> */}
             <Button onClick={handleDetailedInfo} className="mt-3">Take Action</Button>
           </div>
         )}
@@ -328,13 +328,13 @@ const ProjectActionModal: React.FC<ProjectActionModalProps> = ({
           </div>
         )}
 
-        {step === 3 && (
+        {/* {step === 3 && (
           <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
             <p className="text-sm font-medium text-gray-700">
               All steps completed. No pending actions.
             </p>
           </div>
-        )}
+        )} */}
 
 
       </DialogContent>

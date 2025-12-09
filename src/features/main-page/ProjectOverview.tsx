@@ -13,6 +13,7 @@ import ProjectActionModal from "./ProjectActionModal";
 import { ActionValue } from "./utils";
 import { fetchTasks, Task } from "../tasks/utils";
 import { getUserId } from "@/lib/jwt";
+import { downloadReport } from "../ReportCard.utils";
 
 const ITEMS_PER_PAGE = 4;
 
@@ -629,7 +630,7 @@ const ProjectOverview = () => {
                         className="bg-[#3a7573] text-white rounded-[5px] px-2 py-1 flex items-center gap-2 text-[0.6rem] hover:scale-[1.02] transition"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleProjectDownload(project);
+                          downloadReport(project?.id);
                         }}
                       >
                         <DownloadCloud size={16} /> Download Report
