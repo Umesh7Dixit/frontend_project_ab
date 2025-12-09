@@ -53,7 +53,7 @@ const statusConfig: Record<string, StatusConfig> = {
   },
 };
 
-const StatusBadge = ({ status }: { status: string }) => {
+export const StatusBadge = ({ status }: { status: string }) => {
   const config =
     statusConfig[status] || {
       color: "bg-gray-100 text-gray-700 border-gray-200",

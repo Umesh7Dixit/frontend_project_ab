@@ -16,7 +16,7 @@ export async function downloadReport(project_id: number): Promise<void> {
     const data = await axios.post<Blob>(
       "/get_project_category_carbon_with_facilities",
       {
-        project_id,
+        p_project_id:project_id,
       },
       {
         responseType: "blob",
