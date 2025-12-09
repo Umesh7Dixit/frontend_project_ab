@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { downloadReport } from "./ReportCard.utils";
-import { projectId } from "@/lib/jwt";
+import { getProjectId } from "@/lib/jwt";
 
 export default function ReportCard() {
   const projectName = "Carbon Accounting FY2024";
@@ -23,7 +23,7 @@ export default function ReportCard() {
 
       <div className="mt-5 flex justify-end">
         <Button
-          onClick={() => downloadReport(projectId)}
+          onClick={() => downloadReport(getProjectId())}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0b1f1d] text-white text-sm font-medium shadow hover:bg-[#123331] transition"
         >
           <Download className="h-4 w-4" />
