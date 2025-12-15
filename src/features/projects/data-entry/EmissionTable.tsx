@@ -82,7 +82,7 @@ export default function EmissionTable({
   }, [periodLabels, emissionData]);
 
 
-  const { processedRows, grandTotal } = useMemo(() => {
+  const {     processedRows, grandTotal } = useMemo(() => {
     let totalSum = 0;
 
     const rows = emissionData?.map((row) => {
@@ -94,7 +94,9 @@ export default function EmissionTable({
       }, 0);
 
       // 2. You requested to show the summation of quantities
-      const rowTotal = totalQuantity;
+      const ef = Number(row.ef) || 0; 
+      const rowTotal = totalQuantity * ef;
+      // const rowTotal = totalQuantity;
 
       // NOTE: If you ever want actual CO2e later, you would do: 
       // const rowTotal = totalQuantity * (Number(row.emission_factor) || 0);
@@ -162,7 +164,7 @@ export default function EmissionTable({
 
                     <div className="flex flex-col items-start gap-0.5 max-w-[160px]">
                       <div className="font-medium truncate w-full" title={row.activity}>
-                        {row.activity}
+                        {row.activity} 
                       </div>
                       <p className="text-[10px] text-gray-400 truncate w-full">
                         {row.selection_1 || "N/A"} • {row.selection_2 || "N/A"}

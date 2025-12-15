@@ -17,6 +17,8 @@ import InfoDrawer from "./InfoDrawer";
 import Cookies from "js-cookie";
 import { COOKIE_USER_INFO, ORGANIZATION_INFO } from "@/lib/constants";
 import { projectApi } from '@/lib/api/project';
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { TooltipProvider } from "@radix-ui/react-tooltip";
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -208,7 +210,7 @@ export default function NewProject() {
   );
 
   // TODO : Fix for 100% completion
-  const allFieldsFilled = Object.values(getValues()).every(v => v !== undefined && v !== "");
+  // const allFieldsFilled = Object.values(getValues()).every(v => v !== undefined && v !== "");
 
   return (
     <FormProvider {...methods}>
@@ -386,13 +388,34 @@ export default function NewProject() {
                       Clear
                     </Button>
 
-                    <Button
+                    {/* <Button
                       type="submit"
                       className="w-full md:w-auto"
                       disabled={isSubmitting}
                     >
                       {isSubmitting ? 'Creating...' : 'Create Project'}
-                    </Button>
+                    </Button> */}
+
+                      <TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div className="w-full md:w-auto">
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isSubmitting || progress < 100}
+          >
+            {isSubmitting ? 'Creating...' : 'Create Project'}
+          </Button>
+        </div>
+      </TooltipTrigger>
+      {progress < 100 && (
+        <TooltipContent>
+          <p>Complete all fields to create project ({progress}% done)</p>
+        </TooltipContent>
+      )}
+    </Tooltip>
+  </TooltipProvider>
                   </div>
                 </div>
               </Card>

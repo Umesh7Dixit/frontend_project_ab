@@ -149,7 +149,64 @@ export default function FieldRenderer({ field, form, className = "" }: Props) {
     // Prevent first render from showing blank table
     if (!rows || rows.length === 0) return null;
 
-    return (
+    // return (
+    //   <div className={`${baseColClass} ${className}`}>
+    //     <p className="font-medium">{label}</p>
+
+    //     <Table className="mt-2 border rounded-md w-full table-fixed">
+    //       <TableHeader>
+    //         <TableRow>
+    //           {field.columns.map((col) => (
+    //             <TableHead
+    //               key={col.key}
+    //               className={col.key === "scope" ? "w-36 whitespace-nowrap" : "w-52 text-sm text-center whitespace-nowrap"}
+    //             >
+    //               {col.label}
+    //             </TableHead>
+    //           ))}
+    //         </TableRow>
+    //       </TableHeader>
+
+    //       <TableBody>
+    //         {rows.map((row: any, rowIndex: number) => (
+    //           <TableRow key={rowIndex} className="even:bg-muted/40">
+    //             {field.columns.map((col) => (
+    //               <TableCell key={col.key} className="p-1 text-center">
+    //                 {col.inputType === "readonly" ? (
+    //                   <span className="font-medium">{row[col.key]}</span>
+    //                 ) : col.inputType === "number" ? (
+    //                   <Input
+    //                     type="number"
+    //                     inputMode="decimal"
+    //                     className="h-8 text-center w-full text-sm"
+    //                     placeholder={col.label}
+    //                     value={row[col.key] ?? ""}
+    //                     onChange={(e) =>
+    //                       form.setValue(`${field.name}[${rowIndex}].${col.key}`, e.target.value)
+    //                     }
+    //                   />
+    //                 ) : (
+    //                   <Input
+    //                     type="text"
+    //                     className="h-8 text-center w-full text-sm"
+    //                     placeholder={col.label}
+    //                     value={row[col.key] ?? ""}
+    //                     onChange={(e) =>
+    //                       form.setValue(`${field.name}[${rowIndex}].${col.key}`, e.target.value)
+    //                     }
+    //                   />
+    //                 )}
+    //               </TableCell>
+    //             ))}
+    //           </TableRow>
+    //         ))}
+    //       </TableBody>
+    //     </Table>
+    //   </div>
+    // );
+
+    
+  return (
       <div className={`${baseColClass} ${className}`}>
         <p className="font-medium">{label}</p>
 
@@ -174,6 +231,25 @@ export default function FieldRenderer({ field, form, className = "" }: Props) {
                   <TableCell key={col.key} className="p-1 text-center">
                     {col.inputType === "readonly" ? (
                       <span className="font-medium">{row[col.key]}</span>
+                    ) : col.inputType === "select" ? (
+                      // NEW: Handle select dropdowns
+                      <Select
+                        value={row[col.key] ?? ""}
+                        onValueChange={(value) =>
+                          form.setValue(`${field.name}[${rowIndex}].${col.key}`, value)
+                        }
+                      >
+                        <SelectTrigger className="h-8 w-full text-sm">
+                          <SelectValue placeholder="Select..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {col.options?.map((opt) => (
+                            <SelectItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     ) : col.inputType === "number" ? (
                       <Input
                         type="number"

@@ -18,11 +18,20 @@ export type FieldOption = {
   value: string;
 };
 
-export type TableColumn = {
+// export type TableColumn = {
+//   label: string;
+//   key: string;
+//   // inputType?: "text" | "number" | "readonly";
+//   inputType?: "text" | "number" | "readonly" | "select";
+//   options?: Array<{ label: string; value: string }>;
+// };
+
+export interface TableColumn {
   label: string;
   key: string;
-  inputType?: "text" | "number" | "readonly";
-};
+  inputType?: "text" | "number" | "readonly" | "select";
+  options?: Array<{ label: string; value: string }>;
+}
 
 export type Field =
   | {
@@ -334,27 +343,63 @@ export const sections: Section[] = [
         ],
         rows: ["Scope 1", "Scope 2", "Scope 3 (Optional)"],
       },
-      {
-        name: "organizationalBoundaries",
-        label: "Organizational Boundaries – Legal Entities / Facilities",
-        type: "table",
-        cols: 2,
-        columns: [
-          { label: "Entity / Facility Name", key: "entity", inputType: "text" },
-          { label: "% Equity Share", key: "equityShare", inputType: "number" },
-          {
-            label: "Financial Control (Yes/No)",
-            key: "financialControl",
-            inputType: "text",
-          },
-          {
-            label: "Operational Control (Yes/No)",
-            key: "operationalControl",
-            inputType: "text",
-          },
-        ],
-        rows: ["Row 1", "Row 2", "Row 3"],
-      },
+
+
+      // {
+      //   name: "organizationalBoundaries",
+      //   label: "Organizational Boundaries – Legal Entities / Facilities",
+      //   type: "table",
+      //   cols: 2,   
+      //   columns: [
+      //     { label: "Entity / Facility Name", key: "entity", inputType: "text" },
+      //     { label: "% Equity Share", key: "equityShare", inputType: "number" },
+      //     {
+      //       label: "Financial Control (Yes/No)",
+      //       key: "financialControl",
+      //       inputType: "text",
+      //     },
+      //     {
+      //       label: "Operational Control (Yes/No)",
+      //       key: "operationalControl",
+      //       inputType: "text",
+      //     },
+      //   ],
+      //   rows: ["Row 1", "Row 2", "Row 3"],
+      // },
+
+
+      // Update the organizationalBoundaries field in your sections array
+
+{
+  name: "organizationalBoundaries",
+  label: "Organizational Boundaries – Legal Entities / Facilities",
+  type: "table",
+  cols: 2,   
+  columns: [
+    { label: "Entity / Facility Name", key: "entity", inputType: "text" },
+    { label: "% Equity Share", key: "equityShare", inputType: "number" },
+    {
+      label: "Financial Control (Yes/No)",
+      key: "financialControl",
+      inputType: "select",
+      options: [
+        { label: "Yes", value: "yes" },
+        { label: "No", value: "no" }
+      ]
+    },
+    {
+      label: "Operational Control (Yes/No)",
+      key: "operationalControl",
+      inputType: "select",
+      options: [
+        { label: "Yes", value: "yes" },
+        { label: "No", value: "no" }
+      ]
+    },
+  ],
+  rows: ["Row 1", "Row 2", "Row 3"],
+},
+
       {
         name: "organizationalDiagram",
         label: "Organizational Diagram (if parent does not report emissions)",
